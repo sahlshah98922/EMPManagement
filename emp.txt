@@ -1,0 +1,30 @@
+-- Create database
+CREATE DATABASE IF NOT EXISTS demo;
+USE demo;
+
+-- Create table
+CREATE TABLE IF NOT EXISTS clover (
+    id INT PRIMARY KEY,
+    address1 VARCHAR(255),
+    birthdate DATE,
+    city VARCHAR(100),
+    hobbies VARCHAR(255),
+    name VARCHAR(100),
+    pannumber VARCHAR(20),
+    pin VARCHAR(20),
+    state VARCHAR(100),
+    username VARCHAR(100)
+);
+
+-- Insert dummy data
+INSERT INTO clover (id, address1, birthdate, city, hobbies, name, pannumber, pin, state, username) VALUES
+(1, '12 MG Road', '1990-05-12', 'Mumbai', 'cricket,reading', 'Amit Sharma', 'ABCDE1234F', '400001', 'Maharashtra', 'amit.sh'),
+(2, 'Flat 5B, Green Park', '1988-11-20', 'Delhi', 'music,travel', 'Neha Verma', 'PQRST6789K', '110016', 'Delhi', 'neha.v'),
+(3, '23 Park Street', '1995-02-01', 'Kolkata', 'photography', 'Rohit Das', 'LMNOP2345Z', '700016', 'West Bengal', 'rohit.d'),
+(4, '45 Residency Rd', '1978-08-08', 'Bengaluru', 'gardening,reading', 'Priya Rao', 'GHJKL9876Y', '560025', 'Karnataka', 'priya.r'),
+(5, '7A Marine Drive', '1992-12-30', 'Mumbai', 'yoga,travel', 'Sandeep Kumar', 'ZXCVB5432N', '400020', 'Maharashtra', 'sandeep.k'),
+(6, '10 Lotus Colony', '1985-03-15', 'Chennai', 'cooking', 'Anita Iyer', 'ASDFG1111H', '600028', 'Tamil Nadu', 'anita.i'),
+(7, '88 Silver Street', '1999-07-25', 'Pune', 'football,movies', 'Karan Mehta', 'QWERT9999U', '411001', 'Maharashtra', 'karan.m'),
+(8, '2 Hill View', '1983-01-10', 'Ahmedabad', 'reading', 'Maya Patel', 'POIUY5555T', '380009', 'Gujarat', 'maya.p'),
+(9, '14 Rose Lane', '1997-09-09', 'Jaipur', 'travel,art', 'Vikas Sharma', 'LKJHG3333R', '302001', 'Rajasthan', 'vikas.s'),
+(10, '101 Ocean Ave', '1991-04-04', 'Kochi', 'swimming', 'Leena Thomas', 'MNBVC2222E', '682011', 'Kerala', 'leena.t');

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Define the appender to log to a file -->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>D:/Logs/springboot-app/queries.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Log to console as well for development purposes (Optional) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Log Hibernate SQL queries to file -->
+    <logger name="org.hibernate.SQL" level="DEBUG">
+        <appender-ref ref="FILE" />
+    </logger>
+
+    <!-- Log Hibernate SQL parameters to file -->
+    <logger name="org.hibernate.type.descriptor.sql" level="TRACE">
+        <appender-ref ref="FILE" />
+    </logger>
+
+    <!-- Root logger that logs to both console and file -->
+    <root level="INFO">
+        <appender-ref ref="FILE" />
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+</configuration>
+

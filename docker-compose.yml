@@ -1,33 +1,67 @@
 
-version: '3.8'
 
 services:
-  db:
-    image: mysql
-    container_name: mysql_db
-    environment:
-      MYSQL_DATABASE: demo
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
+  # Spring Boot Application
+  spring-boot-app:
+    image: employee-spring-boot-image:latest  # Use your existing Spring Boot Docker image
     ports:
-      - "3306:3306"
+      - "8080:8080"  # Expose Spring Boot application on port 8080
+      - "8081:8081"  # Expose the actuator Prometheus metrics endpoint
+    environment:
+      # Database configuration for Spring Boot application
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/demo  # Connect to 'mysql' service (use 3306)
+      - SPRING_DATASOURCE_USERNAME=root  # MySQL username
+      - SPRING_DATASOURCE_PASSWORD=root  # MySQL password
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update  # Hibernate config (auto schema update)
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.MySQL8Dialect  # MySQL dialect for Hibernate
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus  # Expose Prometheus endpoint
     networks:
-      - mynetwork
-
-  app:
-    image: EMP_MN
-    container_name: EMP_MN
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/demo
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-    ports:
-      - "9090:9090"
+      - monitoring
     depends_on:
-      - db
+      - mysql  # Ensure Spring Boot app waits for MySQL to start
+
+  # Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml  # Prometheus configuration file
+    ports:
+      - "9090:9090"  # Prometheus dashboard at localhost:9090
     networks:
-      - mynetwork
+      - monitoring
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: "admin"  # Default admin password
+      GF_SECURITY_ALLOW_ANONYMOUS_ACCESS: "true"  # Allow anonymous access
+      GF_DATASOURCE_URL: "http://prometheus:9090"  # Point Grafana to Prometheus service
+    ports:
+      - "3000:3000"  # Grafana dashboard at localhost:3000
+    networks:
+      - monitoring
+    depends_on:
+      - prometheus
+
+  # MySQL Database
+  mysql:
+    image: mysql:8  # Use MySQL 8.0 image
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root  # MySQL root password (only set this, do not set MYSQL_USER)
+      MYSQL_DATABASE: demo  # Create a database named 'demo'
+    ports:
+      - "3307:3306"  # Expose MySQL on localhost:3307 (external) but 3306 internally
+    networks:
+      - monitoring
+    volumes:
+      - mysql-data:/var/lib/mysql  # Persist MySQL data to avoid losing data on container restart
 
 networks:
-  mynetwork:
-    driver: bridge
+  monitoring:
+
+volumes:
+  mysql-data:  # Define a volume for MySQL data persistence
