@@ -1,0 +1,60 @@
+name: Employee Management CI
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-push:
+    runs-on: self-hosted
+
+    env:
+      IMAGE_NAME: empmanagement
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+          cache: maven
+
+      - name: Make Maven Wrapper executable
+        run: chmod +x mvnw
+
+      - name: Build WAR and run tests
+        run: ./mvnw --batch-mode clean verify
+
+      - name: Verify WAR artifact
+        run: |
+          ls -lh target/*.war
+          test -f target/Employee_Management_System-0.0.1-SNAPSHOT.war
+
+      - name: Set image tag
+        run: echo "IMAGE_TAG=${GITHUB_SHA::12}" >> "$GITHUB_ENV"
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t quay.io/${{ secrets.QUAY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} \
+            .
+
+      - name: Log in to Quay.io
+        uses: docker/login-action@v3
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+
+      - name: Push image to Quay.io
+        run: |
+          docker push quay.io/${{ secrets.QUAY_NAMESPACE }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+
+      - name: Log out from Quay.io
+        if: always()
+        run: docker logout quay.io
