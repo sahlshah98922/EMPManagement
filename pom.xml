@@ -12,6 +12,7 @@
     <groupId>com.boot</groupId>
     <artifactId>Employee_Management_System</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>     
     <name>Employee_Management_System</name>
     <description>Employee_Management_System-Spring-Boot</description>
     <properties>
