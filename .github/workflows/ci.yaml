@@ -31,7 +31,7 @@ jobs:
           fi
 
           case "$DB_URL" in
-            jdbc:mysql://10.44.11.129:3306/demo*)
+            jdbc:mysql://172.27.121.129:3306/demo*)
               echo "DB_URL points too the expected Windows MySQL database"
               ;;
             *)
@@ -45,7 +45,7 @@ jobs:
             exit 1
           fi
 
-          nc -zv 10.44.11.129 3306
+          nc -zv 172.27.121.129 3306
 
       - name: Set up Java 8
         uses: actions/setup-java@v4
