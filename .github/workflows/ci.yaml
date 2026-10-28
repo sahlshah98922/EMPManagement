@@ -32,7 +32,7 @@ jobs:
 
           case "$DB_URL" in
             jdbc:mysql://10.44.11.129:3306/demo*)
-              echo "DB_URL points to the expected Windows MySQL database"
+              echo "DB_URL points too the expected Windows MySQL database"
               ;;
             *)
               echo "ERROR: DB_URL does not point to the expected Windows MySQL database"
