@@ -1,0 +1,51 @@
+name: Employee Management CD
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to Kubernetes
+    runs-on: self-hosted
+
+    env:
+      NAMESPACE: employee-management
+      IMAGE: quay.io/sahilshah/empmanagement:fb027b1090fb
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify Kubernetes connectivity
+        run: |
+          kubectl cluster-info
+          kubectl get nodes
+
+      - name: Create namespace
+        run: |
+          kubectl create namespace "$NAMESPACE" \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Deploy application
+        run: |
+          kubectl -n "$NAMESPACE" create deployment empmanagement \
+            --image="$IMAGE" \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Configure application port
+        run: |
+          kubectl -n "$NAMESPACE" expose deployment empmanagement \
+            --name=empmanagement \
+            --port=8080 \
+            --target-port=8080 \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Check deployment status
+        run: |
+          kubectl -n "$NAMESPACE" rollout status deployment/empmanagement \
+            --timeout=180s
+
+          kubectl -n "$NAMESPACE" get deployments,pods,services -o wide
