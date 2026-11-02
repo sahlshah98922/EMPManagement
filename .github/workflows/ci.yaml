@@ -23,7 +23,7 @@ jobs:
       - name: Check MySQL connectivity
         shell: bash
         run: |
-          echo "Checking database configuration..."
+          echo "Checking database configuration...."
 
           if [ -z "$DB_URL" ]; then
             echo "ERROR: DB_URL is empty"
