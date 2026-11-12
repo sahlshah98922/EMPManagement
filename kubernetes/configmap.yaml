@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: empmanagement-config
+  namespace: employee-management
+data:
+  DB_URL: "jdbc:mysql://172.27.121.129:3306/demo?useSSL=false&allowPublicKeyRetrieval=true"
