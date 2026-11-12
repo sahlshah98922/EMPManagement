@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: empmanagement
+  namespace: employee-management
+  labels:
+    app: empmanagement
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: empmanagement
+
+  template:
+    metadata:
+      labels:
+        app: empmanagement
+
+    spec:
+      containers:
+        - name: empmanagement
+          image: quay.io/sahilshah/empmanagement:fb027b1090fb
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 8080
+
+          env:
+            - name: DB_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: empmanagement-config
+                  key: DB_URL
+
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: empmanagement-db
+                  key: DB_USERNAME
+
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: empmanagement-db
+                  key: DB_PASSWORD
